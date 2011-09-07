@@ -2,6 +2,14 @@ class MicropostsController < ApplicationController
   before_filter :authenticate, :only => [:create, :destroy]
   before_filter :authorized_user, :only => :destroy
   
+  def index
+    @user = User.find_by_id(params[:user_id])
+    @feed_items = []
+    if !@user.nil?
+      @feed_items = @user.feed.paginate(:page => params[:page])
+    end
+  end
+  
   def create
     @micropost = current_user.microposts.build(params[:micropost])
     if @micropost.save
